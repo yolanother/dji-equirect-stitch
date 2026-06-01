@@ -18,7 +18,7 @@
   "peerDependenciesMeta": {
     "react": { "optional": true }
   },
-  "repository": { "type": "git", "url": "https://github.com/DoubTech/panostitch" },
+  "repository": { "type": "git", "url": "https://github.com/yolanother/panostitch" },
   "license": "MIT",
   "author": "DoubTech"
 }

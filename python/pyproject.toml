@@ -14,7 +14,7 @@ keywords = ["360", "fisheye", "equirectangular", "stitching", "dji", "panorama",
 dependencies = ["numpy", "opencv-python", "scipy"]
 
 [project.urls]
-Homepage = "https://github.com/DoubTech/panostitch"
+Homepage = "https://github.com/yolanother/panostitch"
 
 [project.scripts]
 panostitch = "panostitch.stitch:main"
