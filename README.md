@@ -140,6 +140,78 @@ the GPU (Three.js shader port of the Python `render_equirect` math), so you can
 pan around during playback at capture quality. *(Three.js stitcher + player:
 see `js/` — in active development; tracked in the project's task board.)*
 
+
+### React — view a trained Gaussian splat
+
+```jsx
+import { SplatViewerPlayer } from "dji-equirect-stitch";
+
+<SplatViewerPlayer src="/scene.ply" style={{ height: 480 }} />
+```
+
+Or the framework-agnostic core (same injected-THREE / option / event / `dispose()`
+shape as `Equirect360`):
+
+```js
+import * as THREE from "three";
+import * as GaussianSplats3D from "@mkkellogg/gaussian-splats-3d";
+import { SplatViewer } from "dji-equirect-stitch";
+
+const viewer = new SplatViewer(mountEl, {
+  three: THREE,                  // inject the host THREE (shared instance)
+  gaussianSplats3D: GaussianSplats3D,
+  initialView: { position: [0, 0, 5], lookAt: [0, 0, 0], up: [0, -1, 0] },
+});
+viewer.on("ready", () => viewer.setView({ position: [2, 1, 4] }));
+await viewer.load("/scene.ply");   // .ply | .splat | .ksplat
+// ... later
+viewer.dispose();
+```
+
+A runnable demo (CDN import-map, no build step) lives at
+[`examples/splat-viewer.html`](examples/splat-viewer.html) — serve the `js/`
+parent over HTTP and drop a real `.ply` next to it.
+
+**Rendering** is delegated to the mature, MIT-licensed
+[`@mkkellogg/gaussian-splats-3d`](https://github.com/mkkellogg/GaussianSplats3D)
+renderer (a real Gaussian-splat rasterizer is out of scope here). It is a hard
+dependency of the JS package; it requires **`three >= 0.160`**, which is
+stricter than the equirect viewer's `>= 0.150` — pin a recent `three` if you
+use the splat viewer.
+
+**Supported formats (v1): `.ply`, `.splat`, `.ksplat`** — what the renderer
+ingests natively.
+
+**`.spz` / `.sog`:** our Python side (`scripts/splat_export.py`,
+`splat-transform`) can emit these compressed formats, but there is no robust
+in-browser SPZ/SOG decoder in this renderer yet, so **pre-convert them to
+`.ply`/`.splat` with `splat-transform`** before loading:
+
+```bash
+npx splat-transform scene.spz scene.ply
+```
+
+When a real browser SPZ/SOG decoder is available, plug it in via the
+**`opts.decoders` extension point** (no library fork needed):
+
+```js
+new SplatViewer(mountEl, {
+  three: THREE,
+  decoders: {
+    ".spz": async (url) => {
+      const buf = await (await fetch(url)).arrayBuffer();
+      return decodeSpzToSplatBuffer(buf);   // your decoder → ArrayBuffer | path
+    },
+  },
+});
+await viewer.load("/scene.spz");
+```
+
+The core also exposes `setView`/`getView`, an `on('frame'|'ready'|'view', cb)`
+emitter, and an `opts.viewerOptions(three, gs3d, self)` hook plus overridable
+`_makeViewer()`/`_resolveSource()` for deeper customisation — matching
+`Equirect360`'s extensibility.
+
 ---
 
 ## Repository layout
@@ -149,6 +221,7 @@ python/dji-equirect-stitch/   Python library: lens.py (Kannala-Brandt), stitch.p
 js/                  npm package: Three.js stitcher (shared shader math),
                      React <OsvPlayer/> + <Equirect360/>, dual-stream decoder
 calib/rig.json       the calibrated DJI Avata rig (reference / example)
+examples/            runnable browser demos (e.g. splat-viewer.html)
 docs/images/         test-result screenshots
 ```
 

@@ -11,6 +11,9 @@
   },
   "files": ["src", "README.md"],
   "keywords": ["360", "fisheye", "equirectangular", "stitching", "dji", "panorama", "threejs", "react", "webgl"],
+  "dependencies": {
+    "@mkkellogg/gaussian-splats-3d": "^0.4.7"
+  },
   "peerDependencies": {
     "react": ">=17",
     "three": ">=0.150"

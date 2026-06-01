@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!--
+  =============================================================================
+   dji-equirect-stitch — SplatViewer demo
+   Constructs a SplatViewer with an injected THREE (via import-map + CDN, the
+   same dependency-injection pattern the library uses) and loads a trained
+   Gaussian-splat scene. Serve this directory over HTTP (e.g.
+   `npx serve .` or `python -m http.server`) — ES module import-maps do not
+   work from file://. Use of this source is governed by the repo-root LICENSE.
+  =============================================================================
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>dji-equirect-stitch — Splat viewer demo</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #000; color: #ddd;
+      font: 13px/1.4 system-ui, sans-serif; }
+    #app { position: fixed; inset: 0; }
+    #hud { position: fixed; left: 12px; top: 12px; z-index: 10;
+      background: rgba(0,0,0,.55); padding: 8px 10px; border-radius: 6px; }
+    #hud code { color: #8fd; }
+  </style>
+
+  <!--
+    Inject THREE (and the splat renderer) as shared peer modules via an
+    import-map, then pass the SAME THREE instance into the viewer. Pin the
+    versions you ship; three >= 0.160 is required by the renderer.
+  -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+      "@mkkellogg/gaussian-splats-3d": "https://unpkg.com/@mkkellogg/gaussian-splats-3d@0.4.7/build/gaussian-splats-3d.module.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="hud">
+    Drag to orbit · scroll to zoom.<br />
+    Pointing at: <code id="src"></code>
+  </div>
+  <div id="app"></div>
+
+  <script type="module">
+    import * as THREE from "three";
+    import * as GaussianSplats3D from "@mkkellogg/gaussian-splats-3d";
+    // From an installed package this is: import { SplatViewer } from "dji-equirect-stitch";
+    import { SplatViewer } from "../js/src/SplatViewer.js";
+
+    // ---- Point this at a real trained splat -------------------------------
+    // Drop a .ply / .splat / .ksplat next to this file and set SPLAT_URL, e.g.
+    //   const SPLAT_URL = "./scene.ply";
+    // .spz / .sog must be pre-converted (see README "Splat viewer").
+    const SPLAT_URL = "./scene.ply";
+    document.getElementById("src").textContent = SPLAT_URL;
+
+    const viewer = new SplatViewer(document.getElementById("app"), {
+      three: THREE,                 // inject the host THREE (shared instance)
+      gaussianSplats3D: GaussianSplats3D,
+      background: 0x0b0b0f,
+      initialView: { position: [0, 0, 5], lookAt: [0, 0, 0], up: [0, -1, 0] },
+    });
+
+    viewer.on("ready", () => console.log("splat scene ready"));
+    viewer.load(SPLAT_URL).catch((err) => {
+      console.error(err);
+      document.getElementById("hud").innerHTML =
+        "Failed to load <code>" + SPLAT_URL + "</code>.<br />" +
+        "Place a real .ply/.splat/.ksplat next to this file and reload.";
+    });
+
+    window.addEventListener("beforeunload", () => viewer.dispose());
+  </script>
+</body>
+</html>
