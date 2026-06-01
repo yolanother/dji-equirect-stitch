@@ -1,5 +1,5 @@
 {
-  "name": "panostitch",
+  "name": "dji-equirect-stitch",
   "version": "0.1.0",
   "description": "Calibrated DJI dual-fisheye -> equirectangular 360 stitching for the browser (Three.js + React)",
   "type": "module",
@@ -18,7 +18,7 @@
   "peerDependenciesMeta": {
     "react": { "optional": true }
   },
-  "repository": { "type": "git", "url": "https://github.com/yolanother/panostitch" },
+  "repository": { "type": "git", "url": "https://github.com/yolanother/dji-equirect-stitch" },
   "license": "MIT",
   "author": "DoubTech"
 }

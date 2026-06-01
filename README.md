@@ -1,8 +1,15 @@
-# panostitch
+# dji-equirect-stitch
 
 **Calibrated DJI dual-fisheye → equirectangular 360 stitching — in Python and the browser, with no proprietary tooling.**
 
-`panostitch` turns the two raw fisheye lenses of a DJI Avata 360 (and similar
+> 📷 **Built and tested on the DJI Avata 360.** The bundled `calib/rig.json` is
+> calibrated for that camera, and every result below is from real Avata 360
+> footage. The method generalizes to other back-to-back dual-fisheye 360
+> cameras (Insta360, etc.) with a fresh calibration.
+
+![Before / after — raw DJI Avata 360 dual-fisheye to stitched, stabilized equirect](docs/images/before_after.jpg)
+
+`dji-equirect-stitch` turns the two raw fisheye lenses of a DJI Avata 360 (and similar
 back-to-back 360 cameras) into a clean, stabilized equirectangular panorama
 that matches — and on the seam, beats — the DJI-Studio stitch. It is built for
 reuse across web and Python projects: a Python library + CLI, a Three.js/WebGL
@@ -78,14 +85,14 @@ is deceptively hard. The hard-won findings, all encoded in the library:
 
 ### Python
 ```bash
-pip install panostitch          # (after first release)
+pip install dji-equirect-stitch          # (after first release)
 # or, from this repo:
 pip install ./python
 ```
 
 ### JavaScript / React (Three.js)
 ```bash
-npm install panostitch          # (after first npm publish)
+npm install dji-equirect-stitch          # (after first npm publish)
 ```
 
 ---
@@ -95,7 +102,7 @@ npm install panostitch          # (after first npm publish)
 ### Python — stitch a single frame
 ```python
 import cv2
-from panostitch import load_rig, render_equirect
+from dji_equirect_stitch import load_rig, render_equirect
 
 rig = load_rig("calib/rig.json")
 A = cv2.imread("lensA.jpg"); B = cv2.imread("lensB.jpg")  # the two fisheye streams
@@ -105,25 +112,25 @@ cv2.imwrite("equirect.jpg", equirect)
 
 ### Python — convert a whole OSV to stabilized equirect frames
 ```python
-from panostitch import load_rig, stitch_video
+from dji_equirect_stitch import load_rig, stitch_video
 stitch_video("DJI_….OSV", "DJI_….SRT", load_rig("calib/rig.json"),
              out_dir="frames/", fps=2, width=5760, mp4="equirect.mp4")
 ```
 or the CLI:
 ```bash
-panostitch stitch-video --osv clip.OSV --srt clip.SRT --rig calib/rig.json \
+dji-stitch stitch-video --osv clip.OSV --srt clip.SRT --rig calib/rig.json \
   --out-dir frames/ --fps 2 --width 5760 --mp4 equirect.mp4
 ```
 
 ### Python — calibrate a new camera
 ```bash
 # extract (lensA, lensB, [reference-equirect]) frame triples, then:
-panostitch calibrate --calib-dir triples/ --out calib/rig.json
+dji-stitch calibrate --calib-dir triples/ --out calib/rig.json
 ```
 
 ### React — live, pannable 360 player for raw OSV (GPU stitch)
 ```jsx
-import { OsvPlayer } from "panostitch";
+import { OsvPlayer } from "dji-equirect-stitch";
 import rig from "./calib/rig.json";
 
 <OsvPlayer osv="/clip.OSV" srt="/clip.SRT" rig={rig} stabilize />
@@ -137,7 +144,7 @@ see `js/` — in active development; tracked in the project's task board.)*
 
 ## Repository layout
 ```
-python/panostitch/   Python library: lens.py (Kannala-Brandt), stitch.py
+python/dji-equirect-stitch/   Python library: lens.py (Kannala-Brandt), stitch.py
                      (calibration, render, stabilize, stitch_video) + CLI
 js/                  npm package: Three.js stitcher (shared shader math),
                      React <OsvPlayer/> + <Equirect360/>, dual-stream decoder
@@ -156,7 +163,7 @@ the browser.
 - **Python:** tag a version, `python -m build ./python`, `twine upload`.
 - **npm:** `cd js && npm version <x> && npm publish`.
 - **GitHub:** push, create a release for the tag; this repo is consumed as a
-  git submodule (`git submodule add <url> libs/panostitch`) or via
+  git submodule (`git submodule add <url> libs/dji-equirect-stitch`) or via
   `pip install` / `npm install`.
 
 ## License

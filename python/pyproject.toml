@@ -3,7 +3,7 @@ requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "panostitch"
+name = "dji-equirect-stitch"
 version = "0.1.0"
 description = "Calibrated DJI dual-fisheye -> equirectangular 360 stitching (Python + browser)"
 readme = "../README.md"
@@ -14,11 +14,11 @@ keywords = ["360", "fisheye", "equirectangular", "stitching", "dji", "panorama",
 dependencies = ["numpy", "opencv-python", "scipy"]
 
 [project.urls]
-Homepage = "https://github.com/yolanother/panostitch"
+Homepage = "https://github.com/yolanother/dji-equirect-stitch"
 
 [project.scripts]
-panostitch = "panostitch.stitch:main"
+dji-stitch = "dji_equirect_stitch.stitch:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["panostitch*"]
+include = ["dji_equirect_stitch*"]
