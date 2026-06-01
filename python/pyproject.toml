@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "panostitch"
+version = "0.1.0"
+description = "Calibrated DJI dual-fisheye -> equirectangular 360 stitching (Python + browser)"
+readme = "../README.md"
+requires-python = ">=3.9"
+license = { file = "../LICENSE" }
+authors = [{ name = "DoubTech" }]
+keywords = ["360", "fisheye", "equirectangular", "stitching", "dji", "panorama", "kannala-brandt"]
+dependencies = ["numpy", "opencv-python", "scipy"]
+
+[project.urls]
+Homepage = "https://github.com/DoubTech/panostitch"
+
+[project.scripts]
+panostitch = "panostitch.stitch:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["panostitch*"]

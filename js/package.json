@@ -1,0 +1,24 @@
+{
+  "name": "panostitch",
+  "version": "0.1.0",
+  "description": "Calibrated DJI dual-fisheye -> equirectangular 360 stitching for the browser (Three.js + React)",
+  "type": "module",
+  "main": "src/index.js",
+  "module": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./shader": "./src/stitchShader.js"
+  },
+  "files": ["src", "README.md"],
+  "keywords": ["360", "fisheye", "equirectangular", "stitching", "dji", "panorama", "threejs", "react", "webgl"],
+  "peerDependencies": {
+    "react": ">=17",
+    "three": ">=0.150"
+  },
+  "peerDependenciesMeta": {
+    "react": { "optional": true }
+  },
+  "repository": { "type": "git", "url": "https://github.com/DoubTech/panostitch" },
+  "license": "MIT",
+  "author": "DoubTech"
+}
